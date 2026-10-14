@@ -43,6 +43,15 @@ natural-language question, and clicks **Analyze**. The backend:
 4. asks an LLM only to explain the code-computed outcome with source-grounded wording,
 5. persists the case and its review status.
 
+## Working process
+
+1. Capture learner facts and questions from the UI.
+2. Validate inputs and reject impossible values before saving anything.
+3. Retrieve the latest relevant policy sections, including version-aware and superseded rules.
+4. Run deterministic Python checks for thresholds, approvals, and submission holds.
+5. Ask the LLM to explain the result using the retrieved sources only.
+6. Save the case, citations, status, and next action for review.
+
 The UI shows:
 
 - **Verdict** badges — `eligible` / `ineligible` / `pending`, plus a submission

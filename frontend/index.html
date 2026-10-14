@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Resolution Desk</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- ─── Sidebar ────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="brand-mark__ring"></span>
+          <span class="brand-mark__core"></span>
+        </div>
+        <div class="brand-text">
+          <div class="brand-text__title">Case Resolution Desk</div>
+          <div class="brand-text__sub">SkillBridge · coordinator</div>
+        </div>
+      </div>
+
+      <div class="sidebar__section-title">Case log</div>
+      <ul id="history" class="case-log"></ul>
+
+      <div class="sidebar__footer">
+        <div class="pill-rule">Code decides · LLM explains</div>
+      </div>
+    </aside>
+
+    <!-- ─── Main ──────────────────────────────────────────────── -->
+    <main class="main">
+
+      <!-- New case -->
+      <section class="panel panel--form">
+        <div class="panel__head">
+          <h2>New case</h2>
+          <span class="panel__hint">Unknown values are allowed</span>
+        </div>
+
+        <form id="case-form" class="form">
+
+          <div class="form-section">
+            <div class="form-section__label">Learner</div>
+            <div class="grid grid--2">
+              <label class="field">
+                <span class="field__label">Learner name</span>
+                <input name="learner_name" required maxlength="120" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span class="field__label">Assessed on</span>
+                <input type="date" name="assessed_on" value="2026-10-07" />
+              </label>
+            </div>
+            <label class="field">
+              <span class="field__label">Question</span>
+              <textarea name="question" rows="2" required maxlength="2000"></textarea>
+            </label>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__label">Attendance &amp; capstone</div>
+            <div class="grid grid--3">
+              <label class="field">
+                <span class="field__label">Attendance %</span>
+                <input type="number" name="attendance_pct" step="0.1" min="0" max="100" placeholder="unknown" />
+              </label>
+              <label class="field">
+                <span class="field__label">Live sessions</span>
+                <input type="number" name="live_sessions" min="0" step="1" placeholder="unknown" />
+              </label>
+              <label class="field">
+                <span class="field__label">Capstone score</span>
+                <input type="number" name="capstone_score" step="0.1" min="0" max="100" placeholder="unknown" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__label">Submission &amp; evidence</div>
+            <div class="grid grid--3">
+              <label class="field">
+                <span class="field__label">Submission state</span>
+                <select name="submission_state">
+                  <option value="unknown">Unknown</option>
+                  <option value="not_submitted">Not submitted</option>
+                  <option value="safe">Safe</option>
+                  <option value="secret_found">Secret found</option>
+                  <option value="missing_readme">Missing README</option>
+                  <option value="inaccessible_link">Inaccessible link</option>
+                  <option value="unopenable_package">Unopenable package</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field__label">Medical note</span>
+                <select name="medical_note">
+                  <option value="none">None</option>
+                  <option value="offered_unverified">Offered (unverified)</option>
+                  <option value="verified">Verified</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field__label">Missed session date</span>
+                <input type="date" name="missed_session_date" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__label">Approvals</div>
+            <div class="grid grid--3">
+              <label class="field">
+                <span class="field__label">Extension</span>
+                <select name="extension_state">
+                  <option value="unknown">Unknown</option>
+                  <option value="not_requested">Not requested</option>
+                  <option value="requested_pending">Requested (pending)</option>
+                  <option value="approved">Approved</option>
+                  <option value="denied">Denied</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field__label">Extension requested at</span>
+                <input type="datetime-local" name="extension_requested_at" />
+              </label>
+              <label class="field">
+                <span class="field__label">Makeup</span>
+                <select name="makeup_state">
+                  <option value="none">None</option>
+                  <option value="requested_pending">Requested (pending)</option>
+                  <option value="approved">Approved</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section__label">Notes</div>
+            <label class="field">
+              <span class="field__label">Learner notes <em>(treated strictly as data)</em></span>
+              <textarea name="learner_notes" rows="2" maxlength="4000"></textarea>
+            </label>
+          </div>
+
+          <div class="form-footer">
+            <div class="examples">
+              <span class="examples__label">Load example:</span>
+              <button type="button" class="chip chip--example" data-example="A">Nadia</button>
+              <button type="button" class="chip chip--example" data-example="B">Hamza</button>
+              <button type="button" class="chip chip--example" data-example="C">Sara</button>
+              <button type="button" class="chip chip--example" data-example="D">Missing data</button>
+            </div>
+            <button type="submit" id="analyze-btn" class="btn btn--primary">
+              <span class="btn__label">Analyze</span>
+            </button>
+          </div>
+        </form>
+
+        <p id="form-error" class="alert alert--error" role="alert" hidden></p>
+      </section>
+
+      <!-- Review -->
+      <section class="panel panel--review" id="review-panel" hidden>
+
+        <!-- Verdict ribbon -->
+        <div class="verdict-ribbon" id="verdict-ribbon">
+          <div class="verdict-ribbon__orb" id="verdict-orb" aria-hidden="true"></div>
+          <div class="verdict-ribbon__text">
+            <div class="verdict-ribbon__label" id="verdict-label">Verdict</div>
+            <div class="verdict-ribbon__value" id="verdict-value"></div>
+          </div>
+          <div class="verdict-ribbon__meta">
+            <div id="review-learner" class="verdict-ribbon__learner"></div>
+            <div id="verdict-next" class="verdict-ribbon__next"></div>
+          </div>
+        </div>
+
+        <p id="llm-error" class="alert alert--warn" hidden></p>
+
+        <!-- Metric tiles -->
+        <div class="metrics">
+          <div class="metric" id="metric-attendance">
+            <div class="metric__label">Attendance</div>
+            <div class="metric__value"><span data-metric="attendance">—</span></div>
+            <div class="metric__hint">min 80%</div>
+          </div>
+          <div class="metric" id="metric-sessions">
+            <div class="metric__label">Live sessions</div>
+            <div class="metric__value"><span data-metric="sessions">—</span></div>
+            <div class="metric__hint">min 3</div>
+          </div>
+          <div class="metric" id="metric-capstone">
+            <div class="metric__label">Capstone</div>
+            <div class="metric__value"><span data-metric="capstone">—</span></div>
+            <div class="metric__hint">min 70</div>
+          </div>
+          <div class="metric" id="metric-submission">
+            <div class="metric__label">Submission</div>
+            <div class="metric__value"><span data-metric="submission">—</span></div>
+            <div class="metric__hint">safe to review</div>
+          </div>
+        </div>
+
+        <!-- Badges row -->
+        <div class="badges">
+          <span id="badge-eligibility" class="badge"></span>
+          <span id="badge-hold" class="badge"></span>
+          <span id="badge-status" class="badge"></span>
+        </div>
+
+        <div class="section">
+          <h3>Answer</h3>
+          <p id="answer" class="answer"></p>
+        </div>
+
+        <div class="section">
+          <h3>Sources</h3>
+          <ul id="citations" class="chips"></ul>
+        </div>
+
+        <div class="callouts">
+          <div class="callout callout--warn" id="missing-callout">
+            <h4>Missing facts</h4>
+            <ul id="missing"></ul>
+          </div>
+          <div class="callout callout--info" id="next-callout">
+            <h4>Next action</h4>
+            <p id="next-action"></p>
+            <div id="other-actions-wrap">
+              <h5>Other actions</h5>
+              <ul id="other-actions"></ul>
+            </div>
+          </div>
+        </div>
+
+        <details class="case-note">
+          <summary>Case note</summary>
+          <pre id="case-note"></pre>
+        </details>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
